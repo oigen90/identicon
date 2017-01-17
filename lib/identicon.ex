@@ -14,6 +14,7 @@ defmodule Identicon do
     |> filter_odd_squares
     |> build_pixel_map
     |> draw_image
+    |> save_image(input)
   end
 
   @doc """
@@ -84,7 +85,7 @@ defmodule Identicon do
   @doc """
     Draw image via Erlang EGD. No `image` needed in input parameters, because it's the last func in pipe.
   """
-  def draw_image(%Indeticon.Image{color: color, pixel_map: pixel_map}) do
+  def draw_image(%Identicon.Image{color: color, pixel_map: pixel_map}) do
     image = :egd.create(250, 250)
     fill = :egd.color(color)
 
@@ -93,6 +94,13 @@ defmodule Identicon do
     end
 
     :egd.render(image)
+  end
+
+  @doc """
+    Saves image onto the hard drive.
+  """
+  def save_image(image, filename) do
+    File.write("#{filename}.png", image)
   end
 
 end
