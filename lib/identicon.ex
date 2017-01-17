@@ -11,6 +11,7 @@ defmodule Identicon do
     |> hash_input
     |> pick_color
     |> build_grid
+    |> filter_odd_squares
   end
 
   @doc """
@@ -48,5 +49,16 @@ defmodule Identicon do
   def mirror_row(row) do
     [first, second | _tail] = row
     row ++ [second, first]
+  end
+
+  @doc """
+    Filters the grid, removing all the elements which value is odd.
+  """
+  def filter_odd_squares(%Identicon.Image{grid: grid} = image) do
+    Enum.filter grid, fn({code, _index}) ->
+      rem(code, 2) == 0
+    end
+
+    %Identicon.Image{image | grid: grid}
   end
 end
