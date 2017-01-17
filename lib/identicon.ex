@@ -12,6 +12,7 @@ defmodule Identicon do
     |> pick_color
     |> build_grid
     |> filter_odd_squares
+    |> build_pixel_map
   end
 
   @doc """
@@ -55,10 +56,28 @@ defmodule Identicon do
     Filters the grid, removing all the elements which value is odd.
   """
   def filter_odd_squares(%Identicon.Image{grid: grid} = image) do
-    Enum.filter grid, fn({code, _index}) ->
+    grid = Enum.filter grid, fn({code, _index}) ->
       rem(code, 2) == 0
     end
 
     %Identicon.Image{image | grid: grid}
   end
+
+  @doc """
+    Maps the grid and creates a `pixel_map` with the rectangles' positions
+  """
+  def build_pixel_map(%Identicon.Image{grid: grid} = image) do
+    pixel_map = Enum.map grid, fn({_code, index}) ->
+      horizontal = rem(index, 5) * 50
+      vertical = div(index, 5) * 50
+
+      top_left = {horizontal, vertical}
+      bottom_right = {horizontal + 50, vertical + 50}
+
+      {top_left, bottom_right}
+    end
+
+    %Identicon.Image{image | pixel_map: pixel_map}
+  end
+
 end
