@@ -13,6 +13,7 @@ defmodule Identicon do
     |> build_grid
     |> filter_odd_squares
     |> build_pixel_map
+    |> draw_image
   end
 
   @doc """
@@ -78,6 +79,20 @@ defmodule Identicon do
     end
 
     %Identicon.Image{image | pixel_map: pixel_map}
+  end
+
+  @doc """
+    Draw image via Erlang EGD. No `image` needed in input parameters, because it's the last func in pipe.
+  """
+  def draw_image(%Indeticon.Image{color: color, pixel_map: pixel_map}) do
+    image = :egd.create(250, 250)
+    fill = :egd.color(color)
+
+    Enum.each pixel_map, fn({start, stop}) ->
+      :egd.filledRectangle(image, start, stop, fill)
+    end
+
+    :egd.render(image)
   end
 
 end
